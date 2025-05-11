@@ -4,8 +4,6 @@ import com.codewithpardeep.productservicecapstone.dtos.ErrorDto;
 import com.codewithpardeep.productservicecapstone.dtos.ProductResponseDto;
 import com.codewithpardeep.productservicecapstone.models.Product;
 import com.codewithpardeep.productservicecapstone.services.ProductService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
