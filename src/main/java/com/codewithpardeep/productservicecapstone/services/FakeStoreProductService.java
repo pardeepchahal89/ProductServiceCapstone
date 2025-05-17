@@ -1,6 +1,7 @@
 package com.codewithpardeep.productservicecapstone.services;
 
 import com.codewithpardeep.productservicecapstone.dtos.FakeStoreReponseDto;
+import com.codewithpardeep.productservicecapstone.exceptions.ProductNotFoundException;
 import com.codewithpardeep.productservicecapstone.models.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,10 +16,13 @@ public class FakeStoreProductService implements ProductService {
     }
 
     @Override
-    public Product getProductById(long id) {
+    public Product getProductById(long id) throws ProductNotFoundException {
         FakeStoreReponseDto fakeStoreReponseDto = restTemplate.getForObject(
                 "https://fakestoreapi.com/products/" + id,
                 FakeStoreReponseDto.class);
+        if (fakeStoreReponseDto == null) {
+            throw new ProductNotFoundException("Product with id " + id + " not found");
+        }
 
         return fakeStoreReponseDto.toProduct();
     }
