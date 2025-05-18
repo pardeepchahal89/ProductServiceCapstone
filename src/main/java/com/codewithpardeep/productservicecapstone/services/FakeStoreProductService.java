@@ -4,6 +4,7 @@ import com.codewithpardeep.productservicecapstone.dtos.FakeStoreResponseDto;
 import com.codewithpardeep.productservicecapstone.dtos.FakeStoreRequestDto;
 import com.codewithpardeep.productservicecapstone.exceptions.ProductNotFoundException;
 import com.codewithpardeep.productservicecapstone.models.Product;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -57,7 +58,25 @@ public class FakeStoreProductService implements ProductService {
         return fakeStoreResponseDto.toProduct();
     }
 
-    private  FakeStoreRequestDto createDtoFromParams(String name, String description, double price, String imageUrl, String category) {
+    @Override
+    public Product replaceProduct(long id, String name, String description, double price, String imageUrl, String category) {
+        FakeStoreRequestDto updateFakeStoreRequestDto = createDtoFromParams(name, description, price, imageUrl, category);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<FakeStoreRequestDto> httpEntity = new HttpEntity<>(updateFakeStoreRequestDto, headers);
+
+        ResponseEntity<FakeStoreResponseDto>  responseEntity = restTemplate.exchange(
+                "https://fakestoreapi.com/products/" + id,
+                HttpMethod.PUT,
+                httpEntity,
+                FakeStoreResponseDto.class);
+
+        return responseEntity.getBody().toProduct();
+    }
+
+    private FakeStoreRequestDto createDtoFromParams(String name, String description, double price, String imageUrl, String category) {
         FakeStoreRequestDto fakeStoreRequestDto = new FakeStoreRequestDto();
         fakeStoreRequestDto.setTitle(name);
         fakeStoreRequestDto.setDescription(description);

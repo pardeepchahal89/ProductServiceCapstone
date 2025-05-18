@@ -47,4 +47,17 @@ public class ProductController {
         return ProductResponseDto.from(product);
     }
 
+    @PutMapping("/products/{id}")
+    public ProductResponseDto replaceProduct(@PathVariable("id") long id,
+                                             @RequestBody CreateFakeStoreProductRequestDto createFakeStoreProductRequestDto) {
+        Product product = this.productService.replaceProduct(
+                id,
+                createFakeStoreProductRequestDto.getName(),
+                createFakeStoreProductRequestDto.getDescription(),
+                createFakeStoreProductRequestDto.getPrice(),
+                createFakeStoreProductRequestDto.getImageUrl(),
+                createFakeStoreProductRequestDto.getCategory()
+        );
+        return ProductResponseDto.from(product);
+    }
 }
