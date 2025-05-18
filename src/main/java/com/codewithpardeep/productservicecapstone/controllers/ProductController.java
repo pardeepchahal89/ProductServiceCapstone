@@ -5,6 +5,9 @@ import com.codewithpardeep.productservicecapstone.dtos.ProductResponseDto;
 import com.codewithpardeep.productservicecapstone.exceptions.ProductNotFoundException;
 import com.codewithpardeep.productservicecapstone.models.Product;
 import com.codewithpardeep.productservicecapstone.services.ProductService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -58,6 +61,18 @@ public class ProductController {
                 createFakeStoreProductRequestDto.getImageUrl(),
                 createFakeStoreProductRequestDto.getCategory()
         );
+        return ProductResponseDto.from(product);
+    }
+
+    @PatchMapping(
+            path = "/products/{id}",
+            consumes = "application/json-patch+json"
+    )
+    public ProductResponseDto updateProduct(
+            @PathVariable("id") long id,
+            @RequestBody JsonPatch jsonPatch
+    ) throws ProductNotFoundException, JsonPatchException, JsonProcessingException {
+        Product product = this.productService.applyPatchToProduct(id, jsonPatch);
         return ProductResponseDto.from(product);
     }
 }

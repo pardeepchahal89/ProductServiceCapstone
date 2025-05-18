@@ -4,6 +4,11 @@ import com.codewithpardeep.productservicecapstone.dtos.FakeStoreResponseDto;
 import com.codewithpardeep.productservicecapstone.dtos.FakeStoreRequestDto;
 import com.codewithpardeep.productservicecapstone.exceptions.ProductNotFoundException;
 import com.codewithpardeep.productservicecapstone.models.Product;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -74,6 +79,31 @@ public class FakeStoreProductService implements ProductService {
                 FakeStoreResponseDto.class);
 
         return responseEntity.getBody().toProduct();
+    }
+
+    @Override
+    public Product applyPatchToProduct(long id, JsonPatch patch) throws ProductNotFoundException, JsonPatchException, JsonProcessingException {
+
+        // Get existing product
+        Product existingProduct = getProductById(id);
+
+        // Convert Product to JSON Format
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode productNode = objectMapper.valueToTree(existingProduct);
+
+        // Apply Patch
+        JsonNode patchedNode = patch.apply(productNode);
+
+        //Convert back to Product
+        Product patchedProduct = objectMapper.treeToValue(patchedNode, Product.class);
+
+        return replaceProduct(id,
+                patchedProduct.getName(),
+                patchedProduct.getDescription(),
+                patchedProduct.getPrice(),
+                patchedProduct.getCategory().getName(),
+                patchedProduct.getImageUrl()
+        );
     }
 
     private FakeStoreRequestDto createDtoFromParams(String name, String description, double price, String imageUrl, String category) {
