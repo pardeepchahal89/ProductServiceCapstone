@@ -1,12 +1,11 @@
 package com.codewithpardeep.productservicecapstone.controllers;
 
+import com.codewithpardeep.productservicecapstone.dtos.CreateFakeStoreProductRequestDto;
 import com.codewithpardeep.productservicecapstone.dtos.ProductResponseDto;
 import com.codewithpardeep.productservicecapstone.exceptions.ProductNotFoundException;
 import com.codewithpardeep.productservicecapstone.models.Product;
 import com.codewithpardeep.productservicecapstone.services.ProductService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,18 @@ public class ProductController {
             productResponseDtos.add(ProductResponseDto.from(product));
         }
         return productResponseDtos;
+    }
+
+    @PostMapping("/products")
+    public ProductResponseDto createProduct(@RequestBody CreateFakeStoreProductRequestDto createFakeStoreProductRequestDto) {
+        Product product = this.productService.createProduct(
+                createFakeStoreProductRequestDto.getName(),
+                createFakeStoreProductRequestDto.getDescription(),
+                createFakeStoreProductRequestDto.getPrice(),
+                createFakeStoreProductRequestDto.getImageUrl(),
+                createFakeStoreProductRequestDto.getCategory()
+        );
+        return ProductResponseDto.from(product);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.codewithpardeep.productservicecapstone.services;
 
-import com.codewithpardeep.productservicecapstone.dtos.FakeStoreReponseDto;
+import com.codewithpardeep.productservicecapstone.dtos.FakeStoreResponseDto;
+import com.codewithpardeep.productservicecapstone.dtos.FakeStoreRequestDto;
 import com.codewithpardeep.productservicecapstone.exceptions.ProductNotFoundException;
 import com.codewithpardeep.productservicecapstone.models.Product;
 import org.springframework.stereotype.Service;
@@ -20,29 +21,50 @@ public class FakeStoreProductService implements ProductService {
 
     @Override
     public Product getProductById(long id) throws ProductNotFoundException {
-        FakeStoreReponseDto fakeStoreReponseDto = restTemplate.getForObject(
+        FakeStoreResponseDto fakeStoreResponseDto = restTemplate.getForObject(
                 "https://fakestoreapi.com/products/" + id,
-                FakeStoreReponseDto.class);
-        if (fakeStoreReponseDto == null) {
+                FakeStoreResponseDto.class);
+        if (fakeStoreResponseDto == null) {
             throw new ProductNotFoundException("Product with id " + id + " not found");
         }
 
-        return fakeStoreReponseDto.toProduct();
+        return fakeStoreResponseDto.toProduct();
     }
 
 
     @Override
     public List<Product> getAllProducts() {
-        FakeStoreReponseDto[] fakeStoreReponseDtos = restTemplate.getForObject(
+        FakeStoreResponseDto[] fakeStoreResponseDtos = restTemplate.getForObject(
                 "https://fakestoreapi.com/products",
-                FakeStoreReponseDto[].class);
+                FakeStoreResponseDto[].class);
         List<Product> products = new ArrayList<>();
-        for (FakeStoreReponseDto fakeStoreReponseDto : fakeStoreReponseDtos) {
-            Product product = fakeStoreReponseDto.toProduct();
+        for (FakeStoreResponseDto fakeStoreResponseDto : fakeStoreResponseDtos) {
+            Product product = fakeStoreResponseDto.toProduct();
             products.add(product);
         }
 
         return products;
+    }
+
+    @Override
+    public Product createProduct(String name, String description, double price, String imageUrl, String category) {
+        FakeStoreRequestDto fakeStoreRequestDto = createDtoFromParams(name, description, price, imageUrl, category);
+        FakeStoreResponseDto fakeStoreResponseDto = restTemplate.postForObject(
+                "https://fakestoreapi.com/products",
+                fakeStoreRequestDto,
+                FakeStoreResponseDto.class
+        );
+        return fakeStoreResponseDto.toProduct();
+    }
+
+    private  FakeStoreRequestDto createDtoFromParams(String name, String description, double price, String imageUrl, String category) {
+        FakeStoreRequestDto fakeStoreRequestDto = new FakeStoreRequestDto();
+        fakeStoreRequestDto.setTitle(name);
+        fakeStoreRequestDto.setDescription(description);
+        fakeStoreRequestDto.setPrice(price);
+        fakeStoreRequestDto.setImage(imageUrl);
+        fakeStoreRequestDto.setCategory(category);
+        return fakeStoreRequestDto;
     }
 
 }
