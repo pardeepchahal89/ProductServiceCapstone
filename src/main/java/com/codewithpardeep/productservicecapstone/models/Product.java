@@ -12,6 +12,7 @@ import lombok.Setter;
 public class Product extends Base {
     private double price;
     private String description;
+    private double weight;
     private String imageUrl;
 
     @ManyToOne
