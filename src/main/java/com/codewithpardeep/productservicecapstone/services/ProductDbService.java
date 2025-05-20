@@ -1,5 +1,7 @@
 package com.codewithpardeep.productservicecapstone.services;
 
+import com.codewithpardeep.productservicecapstone.dtos.ProductProjection;
+import com.codewithpardeep.productservicecapstone.dtos.ProductProjectionDto;
 import com.codewithpardeep.productservicecapstone.exceptions.ProductNotFoundException;
 import com.codewithpardeep.productservicecapstone.models.Category;
 import com.codewithpardeep.productservicecapstone.models.Product;
@@ -27,6 +29,18 @@ public class ProductDbService implements ProductService {
 
     @Override
     public Product getProductById(long id) throws ProductNotFoundException {
+        // Optional<Category> categoryOptional = categoryRespository.findByName("electronics");
+        // List<Product> products = productRepository.findByCategory(categoryOptional.get());
+
+        //List<Product> products = productRepository.findByCategory_Name("electronics");
+
+        // List<Product> products = productRepository.getProductsByCategoryNameNative("electronics");
+
+        // List<ProductProjection> projections = productRepository.getProjectedProduct("electronics");
+
+        // List<ProductProjectionDto> projectionDtos = productRepository.getProjectedProductDto("electronics");
+        // System.out.println(projectionDtos);
+
         Optional<Product> productOptional = productRepository.findById(id);
         if (productOptional.isEmpty()) {
             throw new ProductNotFoundException("Product with id " + id + " not found");
@@ -61,7 +75,7 @@ public class ProductDbService implements ProductService {
 
     private Category getCategoryFromDb(String categoryName) {
         Optional<Category> categoryOptional = categoryRespository.findByName(categoryName);
-        if(categoryOptional.isPresent()) {
+        if (categoryOptional.isPresent()) {
             return categoryOptional.get();
         }
         Category newCategory = new Category();

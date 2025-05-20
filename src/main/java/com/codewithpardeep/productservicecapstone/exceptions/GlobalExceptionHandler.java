@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
-    public ErrorDto handleNullPointerException() {
+    public ResponseEntity<ErrorDto> handleNullPointerException() {
         ErrorDto errorDto = new ErrorDto();
         errorDto.setStatus("Failure");
-        errorDto.setMessage("An exception occurred");
+        errorDto.setMessage("An NULL pointer exception occurred");
 
-        return errorDto;
+        return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
