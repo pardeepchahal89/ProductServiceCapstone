@@ -1,11 +1,9 @@
 package com.codewithpardeep.productservicecapstone.services;
 
-import com.codewithpardeep.productservicecapstone.dtos.ProductProjection;
-import com.codewithpardeep.productservicecapstone.dtos.ProductProjectionDto;
 import com.codewithpardeep.productservicecapstone.exceptions.ProductNotFoundException;
 import com.codewithpardeep.productservicecapstone.models.Category;
 import com.codewithpardeep.productservicecapstone.models.Product;
-import com.codewithpardeep.productservicecapstone.repositories.CategoryRespository;
+import com.codewithpardeep.productservicecapstone.repositories.CategoryRepository;
 import com.codewithpardeep.productservicecapstone.repositories.ProductRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
@@ -19,17 +17,17 @@ import java.util.Optional;
 @Service
 @Primary
 public class ProductDbService implements ProductService {
-    private final CategoryRespository categoryRespository;
+    private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
 
-    public ProductDbService(CategoryRespository categoryRespository, ProductRepository productRepository) {
-        this.categoryRespository = categoryRespository;
+    public ProductDbService(CategoryRepository categoryRepository, ProductRepository productRepository) {
+        this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
     }
 
     @Override
     public Product getProductById(long id) throws ProductNotFoundException {
-        // Optional<Category> categoryOptional = categoryRespository.findByName("electronics");
+        // Optional<Category> categoryOptional = categoryRepository.findByName("electronics");
         // List<Product> products = productRepository.findByCategory(categoryOptional.get());
 
         //List<Product> products = productRepository.findByCategory_Name("electronics");
@@ -74,13 +72,13 @@ public class ProductDbService implements ProductService {
     }
 
     private Category getCategoryFromDb(String categoryName) {
-        Optional<Category> categoryOptional = categoryRespository.findByName(categoryName);
+        Optional<Category> categoryOptional = categoryRepository.findByName(categoryName);
         if (categoryOptional.isPresent()) {
             return categoryOptional.get();
         }
         Category newCategory = new Category();
         newCategory.setName(categoryName);
-        return categoryRespository.save(newCategory);
+        return categoryRepository.save(newCategory);
     }
 
     private void buildProduct(Product product, String name, String description, double price, String imageUrl, String category) {
